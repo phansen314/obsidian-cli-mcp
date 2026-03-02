@@ -43,3 +43,15 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### Test vault ###
+tmp/
+!tmp/test-vault/.obsidian/
+!tmp/test-vault/.obsidian/app.json
+
+### Claude Code ###
+.claude/
+
+### Scratch artifacts ###
+tool-schemas-*.json
+tool-schemas-comparison.txt
