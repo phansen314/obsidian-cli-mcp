@@ -54,9 +54,8 @@ application {
 }
 
 tasks.shadowJar {
-    archiveBaseName.set("my-mcp-server")
+    archiveFileName.set("${rootProject.name}_${project.version}.jar")
     archiveClassifier.set("")
-    archiveVersion.set("")
 }
 
 tasks.test {
