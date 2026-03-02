@@ -7,6 +7,9 @@ import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
+import org.slf4j.LoggerFactory
+
+private val logger = LoggerFactory.getLogger("ObsidianCli")
 
 class CliArgs(baseArgs: List<String>, private val params: ParametersAccessor) {
     private val args = baseArgs.toMutableList()
@@ -49,12 +52,18 @@ suspend fun runObsidianCli(
                 // destroyForcibly() closes the process's stdout pipe, which unblocks
                 // the readText() call in outputDeferred — no explicit cancel needed.
                 process.destroyForcibly()
+                logger.error("Command timed out after 30 seconds: {}", fullArgs)
                 errorResult("Command timed out after 30 seconds.")
             } else {
                 val output = outputDeferred.await()
-                CallToolResult(content = listOf(TextContent(text = output)), isError = process.exitValue() != 0)
+                val exitCode = process.exitValue()
+                if (exitCode != 0) {
+                    logger.error("Command failed (exit {}): {} — {}", exitCode, fullArgs, output)
+                }
+                CallToolResult(content = listOf(TextContent(text = output)), isError = exitCode != 0)
             }
         } catch (e: IOException) {
+            logger.error("Failed to start command {}: {}", fullArgs, e.message, e)
             errorResult("Error: ${e.message ?: e.toString()}")
         }
     }
