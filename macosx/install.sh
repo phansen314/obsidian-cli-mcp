@@ -14,6 +14,14 @@ if [[ -z "${JAVA_BIN}" ]]; then
 fi
 echo "Using Java: ${JAVA_BIN}"
 
+OBSIDIAN_BIN="$(command -v obsidian)"
+if [[ -z "${OBSIDIAN_BIN}" ]]; then
+    echo "Error: obsidian CLI not found on PATH" >&2
+    exit 1
+fi
+OBSIDIAN_BIN_DIR="$(dirname "${OBSIDIAN_BIN}")"
+echo "Using obsidian: ${OBSIDIAN_BIN}"
+
 echo "Building fat JAR..."
 "${PROJECT_DIR}/gradlew" -p "${PROJECT_DIR}" shadowJar
 
@@ -43,6 +51,7 @@ mkdir -p "${LOG_DIR}"
 sed -e "s|@VERSION@|${VERSION}|g" \
     -e "s|@INSTALL_DIR@|${INSTALL_DIR}|g" \
     -e "s|@LOG_DIR@|${LOG_DIR}|g" \
+    -e "s|@OBSIDIAN_BIN_DIR@|${OBSIDIAN_BIN_DIR}|g" \
     "${SCRIPT_DIR}/com.codingzen.obsidian-cli-mcp.plist" \
     > "${PLIST_DIR}/com.codingzen.obsidian-cli-mcp.plist"
 
