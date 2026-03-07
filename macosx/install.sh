@@ -31,7 +31,7 @@ ln -sf "${INSTALL_DIR}/${JAR_NAME}" "${INSTALL_DIR}/obsidian-cli-mcp-current.jar
 # Install launcher script with Java path substituted
 echo "Installing launcher script..."
 sed -e "s|@JAVA@|${JAVA_BIN}|g" \
-    "${PROJECT_DIR}/deploy/obsidian-cli-mcp-launcher.sh" \
+    "${SCRIPT_DIR}/obsidian-cli-mcp-launcher.sh" \
     > "${INSTALL_DIR}/obsidian-cli-mcp-launcher.sh"
 chmod +x "${INSTALL_DIR}/obsidian-cli-mcp-launcher.sh"
 
@@ -43,10 +43,10 @@ mkdir -p "${LOG_DIR}"
 sed -e "s|@VERSION@|${VERSION}|g" \
     -e "s|@INSTALL_DIR@|${INSTALL_DIR}|g" \
     -e "s|@LOG_DIR@|${LOG_DIR}|g" \
-    "${PROJECT_DIR}/deploy/com.codingzen.obsidian-cli-mcp.plist" \
+    "${SCRIPT_DIR}/com.codingzen.obsidian-cli-mcp.plist" \
     > "${PLIST_DIR}/com.codingzen.obsidian-cli-mcp.plist"
 
-cp "${PROJECT_DIR}/deploy/com.codingzen.obsidian.plist" \
+cp "${SCRIPT_DIR}/com.codingzen.obsidian.plist" \
    "${PLIST_DIR}/com.codingzen.obsidian.plist"
 
 # Unload existing MCP agent if present

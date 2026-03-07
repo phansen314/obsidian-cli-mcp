@@ -32,7 +32,7 @@ mkdir -p "${SERVICE_DIR}"
 # Substitute @VERSION@ placeholder so the installed file shows the current version
 sed -e "s|@VERSION@|${VERSION}|g" \
     -e "s|@JAVA@|${JAVA_BIN}|g" \
-    "${PROJECT_DIR}/deploy/obsidian-cli-mcp.service" \
+    "${SCRIPT_DIR}/obsidian-cli-mcp.service" \
     > "${SERVICE_DIR}/obsidian-cli-mcp.service"
 
 # Make display vars available to the systemd user manager so PassEnvironment can forward them
