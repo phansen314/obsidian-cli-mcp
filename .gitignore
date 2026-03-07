@@ -51,6 +51,7 @@ tmp/
 
 ### Claude Code ###
 .claude/
+.mcp.json
 
 ### Scratch artifacts ###
 tool-schemas-*.json

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Obsidian CLI MCP Server — Version: @VERSION@ -->
+<!--
+  Optional tool groups — set environment variables to enable:
+    OBSIDIAN_BOOKMARKS=1
+    OBSIDIAN_TEMPLATES=1
+    OBSIDIAN_PLUGINS=1
+    OBSIDIAN_THEMES=1
+    OBSIDIAN_SYNC=1
+    OBSIDIAN_PUBLISH=1
+    OBSIDIAN_BASES=1
+    OBSIDIAN_DEV=1
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.codingzen.obsidian-cli-mcp</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>@INSTALL_DIR@/obsidian-cli-mcp-launcher.sh</string>
+    </array>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>KeepAlive</key>
+    <dict>
+        <key>SuccessfulExit</key>
+        <false/>
+    </dict>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>@OBSIDIAN_BIN_DIR@:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    </dict>
+
+    <key>ThrottleInterval</key>
+    <integer>5</integer>
+
+    <key>StandardOutPath</key>
+    <string>@LOG_DIR@/obsidian-cli-mcp.out.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>@LOG_DIR@/obsidian-cli-mcp.err.log</string>
+</dict>
+</plist>
