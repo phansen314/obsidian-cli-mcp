@@ -1,0 +1,26 @@
+[Unit]
+Description=Obsidian CLI MCP Server
+# Version: @VERSION@
+After=default.target
+
+[Service]
+Type=simple
+ExecStart=@JAVA@ -jar %h/.local/lib/obsidian-cli-mcp/obsidian-cli-mcp-current.jar
+Restart=on-failure
+RestartSec=5
+
+# Obsidian's Electron runtime needs display vars to initialize even in headless CLI mode
+PassEnvironment=WAYLAND_DISPLAY XDG_SESSION_TYPE
+
+# Optional tool groups — uncomment to enable
+# Environment=OBSIDIAN_BOOKMARKS=1
+# Environment=OBSIDIAN_TEMPLATES=1
+# Environment=OBSIDIAN_PLUGINS=1
+# Environment=OBSIDIAN_THEMES=1
+# Environment=OBSIDIAN_SYNC=1
+# Environment=OBSIDIAN_PUBLISH=1
+# Environment=OBSIDIAN_BASES=1
+# Environment=OBSIDIAN_DEV=1
+
+[Install]
+WantedBy=default.target

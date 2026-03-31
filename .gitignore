@@ -1,3 +1,8 @@
 .DS_Store
 .vscode/
 .claude/
+.mcp.json
+
+### Scratch artifacts ###
+tool-schemas-*.json
+tool-schemas-comparison.txt
