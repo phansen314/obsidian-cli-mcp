@@ -9,15 +9,17 @@ Claude Code plugin for Obsidian vault interaction via the official [Obsidian CLI
 
 ## Install
 
-### Quick start (development/testing)
+### Development / testing
+
+Load the plugin directly from your local clone:
 
 ```bash
-claude --plugin-dir /path/to/obsidian-cli-plugin
+claude --plugin-dir /path/to/obsidian-cli-mcp
 ```
 
 ### Permanent install
 
-Register this repo as a marketplace, then install the plugin:
+Add this repo as a marketplace, then install the plugin:
 
 ```
 /plugin marketplace add phansen314/obsidian-cli-mcp
