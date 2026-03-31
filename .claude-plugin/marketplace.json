@@ -1,0 +1,13 @@
+{
+  "name": "obsidian-cli-mcp",
+  "owner": {
+    "name": "phansen314"
+  },
+  "plugins": [
+    {
+      "name": "obsidian-cli",
+      "description": "Obsidian vault interaction via the official Obsidian CLI",
+      "source": "./"
+    }
+  ]
+}

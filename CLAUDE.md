@@ -1,52 +1,45 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## Project
 
-Kotlin MCP (Model Context Protocol) server that exposes tools for interacting with Obsidian vaults via the Obsidian CLI and executing shell commands. Runs as an HTTP server on `127.0.0.1:3000` using Ktor CIO with Streamable HTTP transport.
+Claude Code plugin that provides Obsidian vault interaction via the official Obsidian CLI. Replaces the previous Kotlin MCP server with a lightweight skill-based approach.
 
-## Build Commands
+## Structure
 
-```bash
-./gradlew build          # Build the project
-./gradlew shadowJar      # Create fat JAR (build/libs/my-mcp-server.jar)
-./gradlew run            # Run the server
-./gradlew test           # Run unit tests (JUnit Platform)
-./gradlew integrationTest # Run integration tests (requires Obsidian running)
+```
+.claude-plugin/plugin.json          # Plugin manifest
+skills/obsidian/SKILL.md            # Model-invoked skill (auto-triggers on Obsidian mentions)
+skills/obsidian/references/
+  obsidian-cli.d.ts                 # TypeScript CLI type definitions (~40 commands)
 ```
 
-## Architecture
+## How It Works
 
-**Entry point**: `Main.kt` — validates tool consistency (`validateTools()`), determines enabled tool groups from environment variables (`enabledGroups()`), registers tools with the MCP `Server`, and starts the Ktor HTTP server with `mcpStreamableHttp`.
+The skill teaches Claude the Obsidian CLI invocation pattern:
+```
+obsidian [vault=<name>] <command> [key=value ...] [--flags]
+```
 
-**Tool system** has three layers, split across per-feature files:
+Claude constructs and executes CLI commands directly via Bash. The `.d.ts` reference file provides typed parameter signatures loaded on-demand.
 
-1. **DSL infrastructure** (`tools/ToolDefinition.kt`) — `tool { }` builder creates `ToolDefinition` instances with typed parameter schemas (string, boolean, integer, number). `ParametersAccessor` wraps raw JSON args for typesafe access. `ServerToolDsl` provides `register()` for wiring tools to a server. `ToolName` enum lists all registered tool names. `Param` enum defines all parameter wire names.
+## Adding a Command
 
-2. **Tool definitions** (`tools/*Tools.kt`) — Each feature group has a `*Tools.kt` file (e.g., `CoreTools.kt`, `BookmarksTools.kt`) defining tool definitions using the `tool { }` DSL. `ToolDefinitions.kt` aggregates them into the `toolDefinitions` map and defines `toolGroupings` (mapping `ToolGroup` → sets of `ToolName`) and `visibleTools()` to filter by enabled groups.
+1. Add an interface to `obsidian-cli.d.ts` with a JSDoc comment showing the command name
+2. Add a row to the command table in `SKILL.md`
 
-3. **Tool handlers** (`handlers/*Handlers.kt`) — Each feature group has a `*Handlers.kt` file implementing handlers. `ToolHandlers.kt` aggregates them into the `toolHandlers` map. Each handler is a suspend function using `getParameters(request)` for parameter access, shelling out via `runObsidianCli` / `ProcessBuilder`.
+## Token Budget
 
-**Tool groups**: 9 groups gated by environment variables — Core (always on), Bookmarks, Templates, Plugins, Themes, Sync, Publish, Bases, Dev. Optional groups are enabled by setting their env var to `1` (e.g., `OBSIDIAN_BOOKMARKS=1`). The `integrationTest` task enables all groups.
+| Layer | When loaded | ~Tokens |
+|-------|-------------|---------|
+| Skill metadata | Always | 50 |
+| SKILL.md body | On Obsidian trigger | 400 |
+| obsidian-cli.d.ts | On parameter lookup | 150 |
 
-**Adding a new tool**:
-1. Add the tool name to the `ToolName` enum in `ToolDefinition.kt`
-2. Add the parameter names to the `Param` enum if needed
-3. Define the tool in the appropriate `*Tools.kt` file and add it to that file's definitions map
-4. Add it to the `toolGroupings` map in `ToolDefinitions.kt`
-5. Implement the handler in the appropriate `*Handlers.kt` file and add it to `toolHandlers` in `ToolHandlers.kt`
+## Prerequisites
 
-## Tech Stack
+- Obsidian desktop app running
+- Obsidian CLI available as `obsidian` on PATH
 
-- Kotlin 2.3.10, JVM 21
-- MCP Kotlin SDK 0.8.4
-- Ktor 3.2.3 (CIO engine, SSE, ContentNegotiation)
-- Kotlinx Serialization JSON 1.7.3
-- Shadow plugin for fat JAR packaging
+## Legacy
 
-## Testing
-
-- **Unit tests**: `src/test/kotlin/` — 4 test classes covering `ToolDefinition`, `ToolDefinitions`, `ParametersAccessor`, and `CliArgs`
-- **Integration tests**: `src/integrationTest/kotlin/` — `IntegrationTestBase` uses `assumeTrue` to skip if Obsidian not running. Core tests (`Core*IntegrationTest`) and optional group tests (`Optional*IntegrationTest`).
-- `test-vault/.obsidian/app.json` committed as `{}` — open in Obsidian once to register the vault
+The original Kotlin MCP server is preserved on the `archive/mcp-server` branch.
